@@ -1,37 +1,72 @@
+const turnOnLight = async () => {
+  const storage = await chrome.storage.sync.get("settings");
+  var url =
+    "http://" +
+    storage.settings.hue +
+    "/api/" +
+    storage.settings.hueToken +
+    "/lights/" +
+    storage.settings.lightID +
+    "/state";
+  const response = await fetch(url, {
+    method: "PUT",
+    body: JSON.stringify({ on: true }),
+  });
+  const data = await response.json();
+  return response.status == 200 ? "Lighs On !" : "Failed !";
+};
+
+const turnOffLight = async () => {
+  const storage = await chrome.storage.sync.get("settings");
+  var url =
+    "http://" +
+    storage.settings.hue +
+    "/api/" +
+    storage.settings.hueToken +
+    "/lights/" +
+    storage.settings.lightID +
+    "/state";
+  const response = await fetch(url, {
+    method: "PUT",
+    body: JSON.stringify({ on: false }),
+  });
+  const data = await response.json();
+  return response.status == 200 ? "Lighs Off !" : "Failed !";
+};
+
+const showPopUp = async (tabId, title) => {
+  await chrome.scripting.insertCSS({
+    target: { tabId },
+    files: ["popup.css"],
+  });
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    function: (title) => {
+      const popup = document.createElement("div");
+      popup.id = "popup";
+      popup.innerHTML = `<h1>Title: ${title}</h1>`;
+      document.body.appendChild(popup);
+      setTimeout(() => {
+        popup.remove();
+      }, 5000);
+    },
+    args: [title],
+  });
+};
+
+var tabToUrl = {};
+
 chrome.runtime.onInstalled.addListener(() => {
   chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-    chrome.storage.sync.get("name", (data) => {
-      const name = data.name;
-      console.log("User's name:", name);
-    });
     if (
       changeInfo.status === "complete" &&
       tab.url &&
       tab.url.startsWith("https://meet.google.com/")
     ) {
+      tabToUrl[tabId] = tab.url;
       try {
-        const response = await fetch(
-          "https://jsonplaceholder.typicode.com/todos/1"
-        );
-        const data = await response.json();
-        const title = data.title;
-        await chrome.scripting.insertCSS({
-          target: { tabId },
-          files: ["popup.css"],
-        });
-        await chrome.scripting.executeScript({
-          target: { tabId },
-          function: (title) => {
-            const popup = document.createElement("div");
-            popup.id = "popup";
-            popup.innerHTML = `<h1>Title: ${title}</h1>`;
-            document.body.appendChild(popup);
-            setTimeout(() => {
-              popup.remove();
-            }, 5000);
-          },
-          args: [title],
-        });
+        var title = await turnOnLight();
+        await showPopUp(tabId, title);
       } catch (error) {
         console.error(error);
       }
@@ -49,11 +84,13 @@ chrome.runtime.onInstalled.addListener(() => {
 
   chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
     console.log("User has exited the Google Meet page");
-    chrome.tabs.get(tabId, (tab) => {
-      if (tab.url && tab.url.startsWith("https://meet.google.com/")) {
-        // User has exited the Google Meet page, do something here
-        console.log("User has exited the Google Meet page");
-      }
-    });
+    if (
+      tabToUrl[tabId] &&
+      tabToUrl[tabId].startsWith("https://meet.google.com/")
+    ) {
+      var title = turnOffLight();
+      showPopUp(tabId, title);
+      delete tabToUrl[tabId];
+    }
   });
 });

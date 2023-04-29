@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>My Extension Settings</title>
+    <title>Settings</title>
     <style>
       body {
         font-family: sans-serif;
@@ -13,7 +13,7 @@
         margin-bottom: 10px;
       }
       input[type="text"] {
-        width: 100%;
+        width: 50%;
         padding: 5px;
         border-radius: 3px;
         border: 1px solid #ccc;
@@ -22,9 +22,14 @@
     </style>
   </head>
   <body>
-    <h1>My Extension Settings</h1>
-    <label for="name">Your Name:</label>
-    <input type="text" id="name" name="name" />
+    <h1>Settings</h1>
+    <label for="hue">Hue bridge address:</label>
+    <input type="text" id="hue" name="hue" />
+    <label for="hueToken">Hue token:</label>
+    <input type="text" id="hueToken" name="hueToken" />
+    <label for="lightID">Light ID:</label>
+    <input type="text" id="lightID" name="lightID" />
+
     <button id="save">Save</button>
     <script src="option.js"></script>
   </body>
