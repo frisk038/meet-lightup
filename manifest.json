@@ -1,0 +1,15 @@
+{
+  "name": "Google Meet Lights On",
+  "version": "1.0",
+  "description": "Swith on you Elgato Key Lights when you join a meet session",
+  "manifest_version": 3,
+  "host_permissions": ["https://*/*", "http://*/*"],
+  "permissions": ["scripting", "activeTab", "tabs", "storage"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_ui": {
+    "page": "option.html",
+    "open_in_tab": true
+  }
+}
