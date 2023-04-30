@@ -9,7 +9,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        text-align: center;
+        /* text-align: center; */
         min-height: 100vh;
       }
       input[type="text"] {
@@ -21,6 +21,9 @@
       .code {
         color: white;
         background-color: black;
+      }
+      .hueBulbs {
+        overflow: auto;
       }
     </style>
   </head>
@@ -58,6 +61,8 @@
 
           <label for="hueToken">Hue token:</label>
           <input type="text" id="hueToken" name="hueToken" />
+          <button id="listHue">list bulbs</button>
+          <div id="hueBulbs"></div>
         </div>
         <div>
           <label for="lightID">Light ID:</label>
