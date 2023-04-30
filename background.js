@@ -1,37 +1,50 @@
-const turnOnLight = async () => {
-  const storage = await chrome.storage.sync.get("settings");
-  var url =
-    "http://" +
-    storage.settings.hue +
-    "/api/" +
-    storage.settings.hueToken +
-    "/lights/" +
-    storage.settings.lightID +
-    "/state";
+const switchHue = async (settings, isOn) => {
+  var url = `http://${settings.hue}/api/${settings.hueToken}/lights/${settings.lightID}/state`;
   const response = await fetch(url, {
     method: "PUT",
-    body: JSON.stringify({ on: true }),
+    body: JSON.stringify({ on: isOn }),
   });
   const data = await response.json();
-  return response.status == 200 ? "Lighs On !" : "Failed !";
+  return response.status == 200;
+};
+
+const switchElgato = async (settings, isOn) => {
+  var url = `http://${settings.elgatoAddr}:9123/elgato/lights`;
+  const response = await fetch(url, {
+    method: "PUT",
+    body: JSON.stringify({
+      lights: [{ on: isOn ? 1 : 0 }, { on: isOn ? 1 : 0 }],
+    }),
+  });
+  const data = await response.json();
+  return response.status == 200;
+};
+
+const turnOnLight = async () => {
+  var logStr = "";
+  const storage = await chrome.storage.sync.get("settings");
+  if (storage.settings.enableHue) {
+    var res = await switchHue(storage.settings, true);
+    logStr = "hue switch on " + res ? "success" : "failed";
+  }
+  if (storage.settings.enableElgato) {
+    var res = await switchElgato(storage.settings, true);
+    logStr += "\nelgato switch on " + res ? "success" : "failed";
+  }
+  return logStr;
 };
 
 const turnOffLight = async () => {
+  var logStr = "";
   const storage = await chrome.storage.sync.get("settings");
-  var url =
-    "http://" +
-    storage.settings.hue +
-    "/api/" +
-    storage.settings.hueToken +
-    "/lights/" +
-    storage.settings.lightID +
-    "/state";
-  const response = await fetch(url, {
-    method: "PUT",
-    body: JSON.stringify({ on: false }),
-  });
-  const data = await response.json();
-  return response.status == 200 ? "Lighs Off !" : "Failed !";
+  if (storage.settings.enableHue) {
+    var res = await switchHue(storage.settings, false);
+    logStr = "hue switch off " + res ? "success" : "failed";
+  }
+  if (storage.settings.enableElgato) {
+    var res = await switchElgato(storage.settings, false);
+    logStr += "\nelgato switch off " + res ? "success" : "failed";
+  }
 };
 
 const showPopUp = async (tabId, title) => {
@@ -65,10 +78,9 @@ chrome.runtime.onInstalled.addListener(() => {
     ) {
       tabToUrl[tabId] = tab.url;
       try {
-        var title = await turnOnLight();
-        await showPopUp(tabId, title);
+        var log = await turnOnLight();
       } catch (error) {
-        console.error(error);
+        console.error(log, error);
       }
     }
   });
@@ -88,9 +100,11 @@ chrome.runtime.onInstalled.addListener(() => {
       tabToUrl[tabId] &&
       tabToUrl[tabId].startsWith("https://meet.google.com/")
     ) {
-      var title = turnOffLight();
-      showPopUp(tabId, title);
-      delete tabToUrl[tabId];
+      try {
+        var log = turnOffLight();
+      } catch (error) {
+        console.error(log, error);
+      }
     }
   });
 });

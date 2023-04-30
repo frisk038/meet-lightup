@@ -4,16 +4,15 @@
     <meta charset="UTF-8" />
     <title>Settings</title>
     <style>
-      body {
-        font-family: sans-serif;
-        padding: 20px;
-      }
-      label {
-        display: block;
-        margin-bottom: 10px;
+      .settings {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        min-height: 100vh;
       }
       input[type="text"] {
-        width: 50%;
         padding: 5px;
         border-radius: 3px;
         border: 1px solid #ccc;
@@ -22,15 +21,43 @@
     </style>
   </head>
   <body>
-    <h1>Settings</h1>
-    <label for="hue">Hue bridge address:</label>
-    <input type="text" id="hue" name="hue" />
-    <label for="hueToken">Hue token:</label>
-    <input type="text" id="hueToken" name="hueToken" />
-    <label for="lightID">Light ID:</label>
-    <input type="text" id="lightID" name="lightID" />
+    <div class="settings">
+      <h1>Settings</h1>
 
-    <button id="save">Save</button>
-    <script src="option.js"></script>
+      <div class="hue">
+        <h2>Philips Settings</h2>
+        <div>
+          <input type="checkbox" id="enableHue" name="enableHue" />
+          <label for="enableHue">Enable</label>
+        </div>
+        <div>
+          <label for="hue">Hue bridge IP address:</label>
+          <input type="text" id="hue" name="hue" />
+        </div>
+        <div>
+          <label for="hueToken">Hue token:</label>
+          <input type="text" id="hueToken" name="hueToken" />
+        </div>
+        <div>
+          <label for="lightID">Light ID:</label>
+          <input type="text" id="lightID" name="lightID" />
+        </div>
+      </div>
+
+      <div class="elgato">
+        <h2>Elgato Key Light</h2>
+        <div>
+          <input type="checkbox" id="enableElgato" name="enableElgato" />
+          <label for="enableElgato">Enable</label>
+        </div>
+        <div>
+          <label for="elgatoAddr">IP address:</label>
+          <input type="text" id="elgatoAddr" name="elgatoAddr" />
+        </div>
+      </div>
+
+      <button id="save">Save</button>
+      <script src="option.js"></script>
+    </div>
   </body>
 </html>
