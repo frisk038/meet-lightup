@@ -18,6 +18,10 @@
         border: 1px solid #ccc;
         box-sizing: border-box;
       }
+      .code {
+        color: white;
+        background-color: black;
+      }
     </style>
   </head>
   <body>
@@ -35,6 +39,23 @@
           <input type="text" id="hue" name="hue" />
         </div>
         <div>
+          <div>
+            <p>
+              You can generate a Hue token by typing this in your console, you
+              will need to press the bridge button:
+            </p>
+            <span class="code"
+              >curl -XPOST {YOUR_BRIDGE_ADDRESS}/api/ -d
+              '{"devicetype":"gmeet_hue_ext#4989"}'</span
+            >
+
+            <p>You will get somethings like that:</p>
+            <span class="code"
+              >[{"success":{"username":"YOUR_TOKEN_IS_HERE"}}]</span
+            >
+            <p>Paste here your token whitout the quotes</p>
+          </div>
+
           <label for="hueToken">Hue token:</label>
           <input type="text" id="hueToken" name="hueToken" />
         </div>
