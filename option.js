@@ -11,6 +11,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Load the saved data
   chrome.storage.sync.get("settings", function (data) {
+    if (data.settings === undefined) return;
+
     if (data.settings.hue) {
       hueInput.value = data.settings.hue;
     }
@@ -69,7 +71,6 @@ document.addEventListener("DOMContentLoaded", function () {
       newLI = document.createElement("li");
       newLI.appendChild(newText);
       ul.appendChild(newLI);
-      console.log(light, lights[light].name);
     }
   });
 });
