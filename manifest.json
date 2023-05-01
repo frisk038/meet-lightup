@@ -3,7 +3,7 @@
   "version": "1.0",
   "description": "Switch on you Elgato Key Lights/Philps Hue when you join a meet session",
   "manifest_version": 3,
-  "host_permissions": ["*://meet.google.com/*"],
+  "host_permissions": ["<all_urls>"],
   "permissions": ["tabs", "storage"],
   "background": {
     "service_worker": "background.js"
