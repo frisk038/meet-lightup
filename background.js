@@ -53,33 +53,31 @@ const turnOffLight = async () => {
 
 var tabToUrl = {};
 
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-    if (
-      changeInfo.status === "complete" &&
-      tab.url &&
-      tab.url.startsWith("https://meet.google.com/")
-    ) {
-      tabToUrl[tabId] = tab.url;
-      try {
-        var log = await turnOnLight();
-        console.log(log);
-      } catch (error) {
-        console.error(log, error);
-      }
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+  if (
+    changeInfo.status === "complete" &&
+    tab.url &&
+    tab.url.startsWith("https://meet.google.com/")
+  ) {
+    tabToUrl[tabId] = tab.url;
+    try {
+      var log = await turnOnLight();
+      console.log(log);
+    } catch (error) {
+      console.error(log, error);
     }
-  });
+  }
+});
 
-  chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
-    if (
-      tabToUrl[tabId] &&
-      tabToUrl[tabId].startsWith("https://meet.google.com/")
-    ) {
-      try {
-        turnOffLight();
-      } catch (error) {
-        console.error(error);
-      }
+chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
+  if (
+    tabToUrl[tabId] &&
+    tabToUrl[tabId].startsWith("https://meet.google.com/")
+  ) {
+    try {
+      turnOffLight();
+    } catch (error) {
+      console.error(error);
     }
-  });
+  }
 });
